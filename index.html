@@ -659,7 +659,11 @@
                     <div id="qrcode"></div>
                 </div>
             </div>
-            
+            <div class="contract-counter">
+    إجمالي العقود المُحررة: <span id="contractCount">0</span>
+}
+</div>
+
             <div class="header-center">
                 <h3>بسم الله الرحمن الرحيم</h3>
                 <h1>عقد بيع وشراء مركبة</h1><br>
@@ -2542,6 +2546,30 @@ function saveToCloud(contractData) {
     .catch((error) => {
         console.error("حدث خطأ أثناء الحفظ: ", error);
     });
+	function updateContractCount() {
+    // افترض أن كل عقـد يقع داخل عنصر يحمل class معين، مثل .contract-item
+    const contracts = document.querySelectorAll('.contract-item');
+    
+    // تحديث النص بالعنصر الذي أنشأناه
+    document.getElementById('contractCount').innerText = contracts.length;
+}
+
+// تشغيل الدالة فور تحميل الصفحة
+document.addEventListener('DOMContentLoaded', updateContractCount);
+function addContract() {
+    let currentCount = localStorage.getItem('contractCount') || 0;
+    currentCount++;
+    localStorage.setItem('contractCount', currentCount);
+    
+    document.getElementById('contractCount').innerText = currentCount;
+}
+
+// عند تحميل الصفحة لعرض العدد المحفوظ مسبقاً
+document.addEventListener('DOMContentLoaded', () => {
+    let savedCount = localStorage.getItem('contractCount') || 0;
+    document.getElementById('contractCount').innerText = savedCount;
+});
+
 }</script>
 </body>
 </html>
