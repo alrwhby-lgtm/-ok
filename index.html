@@ -2335,12 +2335,14 @@ const database = firebase.database();
         });
     }
 
-    function fillCarData() {
+        function fillCarData() {
         if (isContractLocked) return;
         let typedVal = document.getElementById('plateNumber').value.trim();
         let allCars = JSON.parse(localStorage.getItem('all_cars_list')) || [];
         let matchedPlate = allCars.find(plate => plate === typedVal);
         
+        // التعديل: يتم استرجاع البيانات فقط إذا وجدنا مطابقة حقيقية، 
+        // ودون ذلك لن يتم مسح الحقول التي كتبها المستخدم يدوياً.
         if (matchedPlate) {
             let savedData = localStorage.getItem('car_' + matchedPlate);
             if (savedData) {
@@ -2355,7 +2357,11 @@ const database = firebase.database();
                 updateQRCode();
                 updatePlateDisplay();
             }
-        } else {
+        }
+        // تم حذف أفرع الـ (else) التي كانت تقوم بتفريغ الحقول إجبارياً، 
+        // لكي تبقى البيانات التي كتبها المستخدم محفوظة ولا تُمسح.
+    }
+
             document.getElementById('carType').value = '';
             document.getElementById('carModel').value = '';
             document.getElementById('carColor').value = '';
