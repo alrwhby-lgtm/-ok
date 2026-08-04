@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>عقد بيع وشراء مركبة - معرض أبو ظبي</title>
@@ -890,7 +892,21 @@
     <input type="file" id="backupFileLoader" style="display: none;" accept=".json" onchange="restoreBackupFromFile(event)">
 	</div>
 
-<script>
+<script>// إعدادات مشروعك السحابي
+const firebaseConfig = {
+    apiKey: "AIzaSyBSrwipueXxSbDoww3yT00Pvu3CXKAIply",
+    authDomain: "abo-dabi.firebaseapp.com",
+    databaseURL: "https://abo-dabi-default-rtdb.firebaseio.com",
+    projectId: "abo-dabi",
+    storageBucket: "abo-dabi.appspot.com",
+    messagingSenderId: "933024572284",
+    appId: "1:933024572284:web:7a3fee8312c6c2e0fffaf9",
+    measurementId: "G-307YKH3EX4"
+};
+
+// تهيئة الاتصال
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
     function getValidUsers() {
         let defaultUsers = {
             "وهبي": "1989",
@@ -1367,9 +1383,21 @@
     }
 
     function autoSaveAndPrint() {
-        performAutoSave();
-        window.print();
+    performAutoSave(); // الحفظ القديم الخاص بك
+
+    // جمع بيانات العقد الحالية وإرسالها للسحاب
+    try {
+        let contractData = {
+            date: new Date().toLocaleString()
+            // يمكنك إضافة أي حقول أخرى هنا إذا أردت
+        };
+        saveToCloud(contractData);
+    } catch (e) {
+        console.log("خطأ في الإرسال السحابي: ", e);
     }
+
+    window.print(); // الطباعة
+}
 
     function autoSaveAndPDF() {
         performAutoSave();
@@ -2499,6 +2527,16 @@ function restoreBackupFromFile(event) {
     };
     reader.readAsText(file);
 }
-</script>
+// دالة لحفظ أي عقد أو بيان إلى قاعدة البيانات
+function saveToCloud(contractData) {
+    database.ref('Contracts').push(contractData)
+    .then(() => {
+        console.log("تم الحفظ في قاعدة البيانات السحابية بنجاح! 🚀");
+    })
+    .catch((error) => {
+        console.error("حدث خطأ أثناء الحفظ: ", error);
+    });
+}
+/script>
 </body>
 </html>
